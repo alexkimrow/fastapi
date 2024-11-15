@@ -7,7 +7,8 @@ from passlib.context import CryptContext
 from datetime import datetime
 
 router = APIRouter(
-    prefix="/posts"
+    prefix="/posts",
+    tags=["posts"]
 )
 
 # Get all
