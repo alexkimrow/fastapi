@@ -1,10 +1,11 @@
-import schemas, models
+import schemas, models, oauth2
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from typing import List
 from passlib.context import CryptContext
 from datetime import datetime
+import oauth2
 
 router = APIRouter(
     prefix="/posts",
@@ -26,8 +27,8 @@ def get_post(id: int, db: Session = Depends(get_db)):
     return post
 
 # Create a post
-@router.post("/", response_model=schemas.Post)
-def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
     post = models.Post(**post.dict())
     db.add(post)
     db.commit()
@@ -55,3 +56,4 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     db.delete(post)
     db.commit()
     return post
+
